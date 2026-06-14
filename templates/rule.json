@@ -1,0 +1,9 @@
+{
+  "rules": [
+    {
+      "path": "**/*",
+      "rule": "Flag hardcoded secrets, credentials, or tokens; missing input validation; and unhandled errors. Keep comments terse (explain non-obvious why, not what)."
+    }
+  ],
+  "exclude": ["**/node_modules/**", "**/vendor/**", "**/dist/**", "**/*.lock", "**/*-lock.json"]
+}
