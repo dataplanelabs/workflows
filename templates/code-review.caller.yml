@@ -1,5 +1,5 @@
 # Copy to <repo>/.github/workflows/code-review.yml
-# Calls the org-wide reusable OpenCodeReview workflow.
+# Minimal caller — triggers + keyword guard + concurrency live in the reusable workflow.
 name: Code Review
 
 on:
@@ -8,17 +8,7 @@ on:
   issue_comment:
     types: [created]
 
-concurrency:
-  group: code-review-${{ github.event.pull_request.number || github.event.issue.number || github.ref }}
-  cancel-in-progress: true
-
 jobs:
   review:
-    # PR opened/reopened, or a PR comment starting with the trigger keyword.
-    if: >
-      github.event_name == 'pull_request_target' ||
-      (github.event_name == 'issue_comment' && github.event.issue.pull_request != null &&
-        (startsWith(github.event.comment.body, '/ocr') ||
-         startsWith(github.event.comment.body, '@ocr')))
     uses: dataplanelabs/workflows/.github/workflows/code-review.yml@main
     secrets: inherit

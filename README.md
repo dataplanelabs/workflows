@@ -28,14 +28,13 @@ review comments on PRs. Triggered on PR open/reopen, or on demand by commenting
        types: [created]
    jobs:
      review:
-       if: >
-         github.event_name == 'pull_request_target' ||
-         (github.event_name == 'issue_comment' && github.event.issue.pull_request != null &&
-           (startsWith(github.event.comment.body, '/ocr') ||
-            startsWith(github.event.comment.body, '@ocr')))
        uses: dataplanelabs/workflows/.github/workflows/code-review.yml@main
        secrets: inherit
    ```
+
+   The trigger keyword (`/ocr`, `@ocr`), the keyword guard, and concurrency all
+   live in the reusable workflow — to change them, edit this repo only. The
+   `on:` triggers must stay in each caller (GitHub requires it).
 
 2. Add project rules (optional) — drop a `rule.json` at
    `.opencodereview/rule.json`. It is **auto-loaded** by OCR; no flag needed. See

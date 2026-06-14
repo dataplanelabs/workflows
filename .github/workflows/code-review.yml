@@ -21,12 +21,23 @@ on:
       OCR_LLM_USE_ANTHROPIC:
         required: false
 
+# Centralized here so callers stay minimal — change the trigger keyword in one place.
+concurrency:
+  group: code-review-${{ github.event.pull_request.number || github.event.issue.number || github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
   pull-requests: write
 
 jobs:
   code-review:
+    # PR opened/reopened, or a PR comment starting with the trigger keyword.
+    if: >
+      github.event_name == 'pull_request_target' ||
+      (github.event_name == 'issue_comment' && github.event.issue.pull_request != null &&
+        (startsWith(github.event.comment.body, '/ocr') ||
+         startsWith(github.event.comment.body, '@ocr')))
     runs-on: ubuntu-latest
     steps:
       - name: Get PR context
