@@ -24,9 +24,11 @@ on:
         required: false
 
 # Centralized here so callers stay minimal — change the trigger keyword in one place.
+# cancel-in-progress: false so an unrelated PR comment (e.g. another bot) does not
+# cancel an in-flight review — the comment run queues, then skips via the job `if`.
 concurrency:
   group: code-review-${{ github.event.pull_request.number || github.event.issue.number || github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 permissions:
   contents: read
