@@ -35,15 +35,24 @@ etc. — no value reviewing version bumps). Comment `/ocr` to force a review on 
    jobs:
      review:
        uses: dataplanelabs/workflows/.github/workflows/code-review.yml@main
-       secrets: inherit
+       secrets:
+         OCR_LLM_URL: ${{ secrets.OCR_LLM_URL }}
+         OCR_LLM_AUTH_TOKEN: ${{ secrets.OCR_LLM_AUTH_TOKEN }}
+         OCR_LLM_MODEL: ${{ secrets.OCR_LLM_MODEL }}
+         OCR_LLM_USE_ANTHROPIC: ${{ secrets.OCR_LLM_USE_ANTHROPIC }}
+         GH_APP_ID: ${{ secrets.GH_APP_ID }}
+         GH_APP_MUNMIU_PRIVATE_KEY: ${{ secrets.GH_APP_MUNMIU_PRIVATE_KEY }}
    ```
 
    The trigger keyword (`/ocr`, `@ocr`), the keyword guard, and concurrency all
-   live in the reusable workflow — to change them, edit this repo only. The `on:`
-   triggers and `permissions` must stay in each caller: GitHub requires `on:` in
-   the caller, and a reusable workflow cannot be granted more than the caller's
-   token (the org default is read-only, so `pull-requests: write` must be granted
-   here).
+   live in the reusable workflow — to change them, edit this repo only. Three
+   things must stay in each caller:
+   - `on:` triggers — GitHub requires them in the caller.
+   - `permissions: pull-requests: write` — a reusable workflow cannot exceed the
+     caller's token, and the org default is read-only.
+   - **explicit `secrets:`** — `secrets: inherit` does **not** pass secrets from a
+     private repo into a public reusable workflow, nor across owner boundaries
+     (personal account → org). Passing each secret explicitly works everywhere.
 
 2. Add project rules (optional) — drop a `rule.json` at
    `.opencodereview/rule.json`. It is **auto-loaded** by OCR; no flag needed. See
@@ -70,22 +79,11 @@ The reusable workflow is public, so any repo can call it with **its own** secret
 no fork/copy needed. Set `OCR_LLM_*` (and optionally `GH_APP_*`) on the calling
 repo/org. The secrets always resolve in the **caller's** context, never this repo's.
 
-- **Same owner** (e.g. another `dataplanelabs` repo): `secrets: inherit` works.
-- **Different owner** (personal account, another org): `inherit` does **not** cross
-  the owner boundary — pass secrets explicitly:
-
-  ```yaml
-  jobs:
-    review:
-      uses: dataplanelabs/workflows/.github/workflows/code-review.yml@main
-      secrets:
-        OCR_LLM_URL: ${{ secrets.OCR_LLM_URL }}
-        OCR_LLM_AUTH_TOKEN: ${{ secrets.OCR_LLM_AUTH_TOKEN }}
-        OCR_LLM_MODEL: ${{ secrets.OCR_LLM_MODEL }}
-        OCR_LLM_USE_ANTHROPIC: ${{ secrets.OCR_LLM_USE_ANTHROPIC }}
-        GH_APP_ID: ${{ secrets.GH_APP_ID }}
-        GH_APP_MUNMIU_PRIVATE_KEY: ${{ secrets.GH_APP_MUNMIU_PRIVATE_KEY }}
-  ```
+**Always pass secrets explicitly** (see the caller snippet above). `secrets: inherit`
+only works when the caller is a public repo with the same owner as this one — it
+silently passes nothing when the caller is private (private → public reusable) or
+under a different owner (personal account / another org). Explicit passing works
+in every case, so use it everywhere.
 
 ### Review rules
 
