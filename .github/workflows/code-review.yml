@@ -163,7 +163,11 @@ jobs:
             const warnings = result.warnings || [];
 
             if (comments.length === 0) {
-              const message = result.message || 'No comments generated. Looks good to me.';
+              if (/no supported files changed/i.test(result.message || '')) {
+                console.log(`OpenCodeReview skipped PR comment: ${result.message}`);
+                return;
+              }
+              const message = result.message || 'Review completed with no findings.';
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
