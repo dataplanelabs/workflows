@@ -12,7 +12,7 @@ secrets**.
 AI code review on pull requests, powered by
 [OpenCodeReview](https://github.com/alibaba/open-code-review) (OCR). Posts inline
 review comments on PRs. Triggered on PR open/reopen, or on demand by commenting
-`/open-code-review` (or `@open-code-review`) on a PR.
+`/ocr` (or `@ocr`) on a PR.
 
 ### Adopt it in a repo
 
@@ -31,8 +31,8 @@ review comments on PRs. Triggered on PR open/reopen, or on demand by commenting
        if: >
          github.event_name == 'pull_request_target' ||
          (github.event_name == 'issue_comment' && github.event.issue.pull_request != null &&
-           (startsWith(github.event.comment.body, '/open-code-review') ||
-            startsWith(github.event.comment.body, '@open-code-review')))
+           (startsWith(github.event.comment.body, '/ocr') ||
+            startsWith(github.event.comment.body, '@ocr')))
        uses: dataplanelabs/workflows/.github/workflows/code-review.yml@main
        secrets: inherit
    ```
