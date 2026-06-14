@@ -64,9 +64,25 @@ The reusable workflow reads these via `secrets: inherit`. They are set as
 ### Reuse from another account/org
 
 The reusable workflow is public, so any repo can call it with **its own** secrets —
-no need to fork or copy. Set the `OCR_LLM_*` (and optionally `GH_APP_*`) secrets on
-the calling repo/org; `secrets: inherit` resolves them in the **caller's** context,
-never this repo's. Example caller header stays identical.
+no fork/copy needed. Set `OCR_LLM_*` (and optionally `GH_APP_*`) on the calling
+repo/org. The secrets always resolve in the **caller's** context, never this repo's.
+
+- **Same owner** (e.g. another `dataplanelabs` repo): `secrets: inherit` works.
+- **Different owner** (personal account, another org): `inherit` does **not** cross
+  the owner boundary — pass secrets explicitly:
+
+  ```yaml
+  jobs:
+    review:
+      uses: dataplanelabs/workflows/.github/workflows/code-review.yml@main
+      secrets:
+        OCR_LLM_URL: ${{ secrets.OCR_LLM_URL }}
+        OCR_LLM_AUTH_TOKEN: ${{ secrets.OCR_LLM_AUTH_TOKEN }}
+        OCR_LLM_MODEL: ${{ secrets.OCR_LLM_MODEL }}
+        OCR_LLM_USE_ANTHROPIC: ${{ secrets.OCR_LLM_USE_ANTHROPIC }}
+        GH_APP_ID: ${{ secrets.GH_APP_ID }}
+        GH_APP_MUNMIU_PRIVATE_KEY: ${{ secrets.GH_APP_MUNMIU_PRIVATE_KEY }}
+  ```
 
 ### Review rules
 
