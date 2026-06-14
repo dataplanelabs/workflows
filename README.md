@@ -14,6 +14,9 @@ AI code review on pull requests, powered by
 review comments on PRs. Triggered on PR open/reopen, or on demand by commenting
 `/ocr` (or `@ocr`) on a PR.
 
+**Bot-authored PRs are skipped** on the auto-trigger (release-please, dependabot,
+etc. — no value reviewing version bumps). Comment `/ocr` to force a review on one.
+
 ### Adopt it in a repo
 
 1. Add the caller workflow — copy [`templates/code-review.caller.yml`](templates/code-review.caller.yml)

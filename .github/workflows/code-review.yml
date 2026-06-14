@@ -44,9 +44,12 @@ permissions:
 
 jobs:
   code-review:
-    # PR opened/reopened, or a PR comment starting with the trigger keyword.
+    # Auto-review on PR open/reopen, EXCEPT bot-authored PRs (release-please,
+    # dependabot, etc.) — review those on demand only. A `/ocr` (or `@ocr`) PR
+    # comment always forces a review, including on bot PRs.
     if: >
-      github.event_name == 'pull_request_target' ||
+      (github.event_name == 'pull_request_target' &&
+        github.event.pull_request.user.type != 'Bot') ||
       (github.event_name == 'issue_comment' && github.event.issue.pull_request != null &&
         (startsWith(github.event.comment.body, '/ocr') ||
          startsWith(github.event.comment.body, '@ocr')))
