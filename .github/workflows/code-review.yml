@@ -10,6 +10,8 @@ name: Code Review (OpenCodeReview)
 #   OCR_LLM_URL, OCR_LLM_AUTH_TOKEN
 # Optional:
 #   OCR_LLM_MODEL (default glm-5.2), OCR_LLM_USE_ANTHROPIC (default true)
+#   GH_APP_ID + GH_APP_MUNMIU_PRIVATE_KEY -> post comments as munmiu[bot]
+#     (falls back to github-actions[bot] when absent)
 
 on:
   workflow_call:
@@ -21,6 +23,12 @@ on:
       OCR_LLM_MODEL:
         required: false
       OCR_LLM_USE_ANTHROPIC:
+        required: false
+      # Optional: post review comments as the munmiu GitHub App instead of
+      # github-actions[bot]. If absent/empty, falls back to GITHUB_TOKEN.
+      GH_APP_ID:
+        required: false
+      GH_APP_MUNMIU_PRIVATE_KEY:
         required: false
 
 # Centralized here so callers stay minimal — change the trigger keyword in one place.
@@ -115,10 +123,18 @@ jobs:
           echo "OCR output:"; cat /tmp/ocr-result.json
           echo "OCR stderr:"; cat /tmp/ocr-stderr.log
 
+      - name: Get munmiu app token
+        id: app-token
+        continue-on-error: true # absent app secrets / not installed → fall back to GITHUB_TOKEN
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_MUNMIU_PRIVATE_KEY }}
+
       - name: Post review comments to PR
         uses: actions/github-script@v9
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ steps.app-token.outputs.token || secrets.GITHUB_TOKEN }}
           script: |
             const fs = require('fs');
             const path = '/tmp/ocr-result.json';

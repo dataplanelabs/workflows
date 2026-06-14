@@ -57,8 +57,16 @@ The reusable workflow reads these via `secrets: inherit`. They are set as
 | `OCR_LLM_AUTH_TOKEN` | yes | API token |
 | `OCR_LLM_MODEL` | no | default `glm-5.2` |
 | `OCR_LLM_USE_ANTHROPIC` | no | default `true` |
+| `GH_APP_ID` + `GH_APP_MUNMIU_PRIVATE_KEY` | no | post comments as `munmiu[bot]` (falls back to `github-actions[bot]`) |
 
 `GITHUB_TOKEN` is provided automatically (`pull-requests: write`).
+
+### Reuse from another account/org
+
+The reusable workflow is public, so any repo can call it with **its own** secrets —
+no need to fork or copy. Set the `OCR_LLM_*` (and optionally `GH_APP_*`) secrets on
+the calling repo/org; `secrets: inherit` resolves them in the **caller's** context,
+never this repo's. Example caller header stays identical.
 
 ### Review rules
 
