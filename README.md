@@ -26,6 +26,9 @@ review comments on PRs. Triggered on PR open/reopen, or on demand by commenting
        types: [opened, reopened]
      issue_comment:
        types: [created]
+   permissions:
+     contents: read
+     pull-requests: write
    jobs:
      review:
        uses: dataplanelabs/workflows/.github/workflows/code-review.yml@main
@@ -33,8 +36,11 @@ review comments on PRs. Triggered on PR open/reopen, or on demand by commenting
    ```
 
    The trigger keyword (`/ocr`, `@ocr`), the keyword guard, and concurrency all
-   live in the reusable workflow — to change them, edit this repo only. The
-   `on:` triggers must stay in each caller (GitHub requires it).
+   live in the reusable workflow — to change them, edit this repo only. The `on:`
+   triggers and `permissions` must stay in each caller: GitHub requires `on:` in
+   the caller, and a reusable workflow cannot be granted more than the caller's
+   token (the org default is read-only, so `pull-requests: write` must be granted
+   here).
 
 2. Add project rules (optional) — drop a `rule.json` at
    `.opencodereview/rule.json`. It is **auto-loaded** by OCR; no flag needed. See

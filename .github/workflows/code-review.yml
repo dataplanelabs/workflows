@@ -1,7 +1,9 @@
 name: Code Review (OpenCodeReview)
 
 # Reusable, org-wide AI code review powered by OpenCodeReview (OCR).
-# Callers trigger on pull_request_target/issue_comment and gate with `if:`.
+# Keyword guard + concurrency are centralized here; callers only declare `on:`.
+# Callers MUST grant `permissions: pull-requests: write` (the org default token is
+# read-only and a reusable workflow cannot exceed the caller's permissions).
 # Project rules are auto-loaded from <repo>/.opencodereview/rule.json.
 #
 # Required org/repo secrets (passed via `secrets: inherit`):
