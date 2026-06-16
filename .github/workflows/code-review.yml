@@ -159,8 +159,25 @@ jobs:
               return;
             }
 
-            const comments = result.comments || [];
             const warnings = result.warnings || [];
+
+            // Honor `exclude` globs from <repo>/.opencodereview/rule.json: drop
+            // comments on vendored/tracked paths so they don't spam the PR. OCR
+            // has no native path exclusion, so we post-filter its output here.
+            let excludeGlobs = [];
+            try {
+              const ws = process.env.GITHUB_WORKSPACE || '.';
+              const rj = JSON.parse(fs.readFileSync(`${ws}/.opencodereview/rule.json`, 'utf8'));
+              if (Array.isArray(rj.exclude)) excludeGlobs = rj.exclude.filter((g) => typeof g === 'string');
+            } catch (e) { /* no rule.json / no exclude — review everything */ }
+            const excludeRes = excludeGlobs.map(globToRegExp);
+            const isExcluded = (p) => !!p && excludeRes.some((re) => re.test(p));
+            const rawComments = result.comments || [];
+            const comments = rawComments.filter((c) => !isExcluded(c.path));
+            const excludedCount = rawComments.length - comments.length;
+            if (excludedCount > 0) {
+              console.log(`Excluded ${excludedCount}/${rawComments.length} comment(s) matching .opencodereview/rule.json exclude globs: ${excludeGlobs.join(', ')}`);
+            }
 
             if (comments.length === 0) {
               if (/no supported files changed/i.test(result.message || '')) {
@@ -277,6 +294,17 @@ jobs:
                 issue_number: prNumber,
                 body: finalBody,
               });
+            }
+
+            // Minimal glob -> RegExp: supports ** (any, incl. /), * (non-/), ? (one non-/).
+            function globToRegExp(glob) {
+              const re = glob
+                .replace(/[.+^${}()|[\]\\]/g, '\\$&')
+                .replace(/\*\*/g, ' ')
+                .replace(/\*/g, '[^/]*')
+                .replace(/ /g, '.*')
+                .replace(/\?/g, '[^/]');
+              return new RegExp('^' + re + '$');
             }
 
             function formatComment(comment) {
