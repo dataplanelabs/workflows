@@ -10,7 +10,7 @@ name: Code Review (OpenCodeReview)
 #   OCR_LLM_URL, OCR_LLM_AUTH_TOKEN
 # Optional:
 #   OCR_LLM_MODEL (default glm-5.2), OCR_LLM_USE_ANTHROPIC (default true)
-#   GH_APP_ID + GH_APP_MUNMIU_PRIVATE_KEY -> post comments as munmiu[bot]
+#   GH_APP_CLIENT_ID (or legacy GH_APP_ID) + GH_APP_MUNMIU_PRIVATE_KEY -> post comments as munmiu[bot]
 #     (falls back to github-actions[bot] when absent)
 
 on:
@@ -27,6 +27,8 @@ on:
       # Optional: post review comments as the munmiu GitHub App instead of
       # github-actions[bot]. If absent/empty, falls back to GITHUB_TOKEN.
       GH_APP_ID:
+        required: false
+      GH_APP_CLIENT_ID:
         required: false
       GH_APP_MUNMIU_PRIVATE_KEY:
         required: false
@@ -129,9 +131,9 @@ jobs:
       - name: Get munmiu app token
         id: app-token
         continue-on-error: true # absent app secrets / not installed → fall back to GITHUB_TOKEN
-        uses: actions/create-github-app-token@v3
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3
         with:
-          app-id: ${{ secrets.GH_APP_ID }}
+          client-id: ${{ secrets.GH_APP_CLIENT_ID || secrets.GH_APP_ID }}
           private-key: ${{ secrets.GH_APP_MUNMIU_PRIVATE_KEY }}
 
       - name: Post review comments to PR
