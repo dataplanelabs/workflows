@@ -7,6 +7,41 @@ This repo is **public** so that both public and private org repos can call its
 reusable workflows. It contains only workflow YAML, templates, and docs — **no
 secrets**.
 
+## Organization repositories
+
+All repos under [dataplanelabs](https://github.com/orgs/dataplanelabs/repositories)
+— 22 total (9 public, 13 private). The **Code review** column shows whether a repo
+has adopted the [code-review workflow](#code-review-opencodereview) below:
+`tailored` = project-specific `rule.json`, `minimal` = starter rules, `—` = not
+yet adopted.
+
+| Repo | Vis | Code review | Description |
+|------|-----|-------------|-------------|
+| [.github](https://github.com/dataplanelabs/.github) | private | — | Legacy org reusable workflows — superseded by this repo |
+| [annhien](https://github.com/dataplanelabs/annhien) | private | tailored (Python / Bruin / FastAPI) | — |
+| [design](https://github.com/dataplanelabs/design) | private | — | Brand identity: logo, color tokens, typography, usage guidelines |
+| [dpl-web](https://github.com/dataplanelabs/dpl-web) | private | tailored (Astro / TS) | — |
+| [excalidraw](https://github.com/dataplanelabs/excalidraw) | public | — | Self-hosted Excalidraw with MCP control (fork of mcp-excalidraw-local) |
+| [gcplane](https://github.com/dataplanelabs/gcplane) | public | tailored (Go CLI) | Declarative GitOps control plane for GoClaw (YAML manifests) |
+| [goclaw](https://github.com/dataplanelabs/goclaw) | public | tailored (Go + UI) | Multi-agent AI gateway — single Go binary, 11+ LLM providers, 5 channels |
+| [goclaw-charts](https://github.com/dataplanelabs/goclaw-charts) | public | — | Helm charts for GoClaw deployment |
+| [goclaw-config](https://github.com/dataplanelabs/goclaw-config) | private | minimal | GCPlane GitOps config for GoClaw multi-tenant deployment |
+| [gws-cli](https://github.com/dataplanelabs/gws-cli) | public | — | Read-only Google Workspace CLI for goclaw skill integration |
+| [infra](https://github.com/dataplanelabs/infra) | private | tailored (Terraform / Flux / Ansible / Vault) | IaC for dataplanelabs.com — K3S cluster with FluxCD GitOps |
+| [infra-template](https://github.com/dataplanelabs/infra-template) | private | — | Infrastructure template repository for DataPlaneLabs projects |
+| [miu-bot](https://github.com/dataplanelabs/miu-bot) | public | — | Durable AI assistant framework — nanobot fork w/ Postgres + Temporal |
+| [opencode](https://github.com/dataplanelabs/opencode) | private | — | — |
+| [runnerclubs](https://github.com/dataplanelabs/runnerclubs) | private | — | Platform for runner clubs — members, races, results, PRs, achievements |
+| [scry](https://github.com/dataplanelabs/scry) | public | minimal | Persistent, logged-in, agent-drivable browser (Chromium + CDP + noVNC) |
+| [skills](https://github.com/dataplanelabs/skills) | private | — | — |
+| [ssh-agent](https://github.com/dataplanelabs/ssh-agent) | public | — | GitHub Action to set up `ssh-agent` with a private key |
+| [telegram-bot](https://github.com/dataplanelabs/telegram-bot) | private | — | Telegram–GitHub bot for issue creation and AlertManager alerts |
+| [website](https://github.com/dataplanelabs/website) | private | — | Marketing website — Next.js + shadcn/ui |
+| [workflows](https://github.com/dataplanelabs/workflows) | public | n/a | Org-wide reusable workflows — **this repo** |
+| [zalo-cli](https://github.com/dataplanelabs/zalo-cli) | private | — | — |
+
+`minimal` repos (goclaw-config, scry) carry starter rules — refine via a tracked issue.
+
 ## Code Review (OpenCodeReview)
 
 AI code review on pull requests, powered by
@@ -112,15 +147,8 @@ Rule file format:
 
 ### Rollout status
 
-| Repo | rule.json |
-|------|-----------|
-| annhien | tailored (Python / Bruin / FastAPI) |
-| infra | tailored (Terraform / Flux / Ansible / Vault) |
-| goclaw | tailored (Go + UI) |
-| gcplane | tailored (Go CLI) |
-| dpl-web | tailored (Astro / TS) |
-| goclaw-config | minimal — refine via tracked issue |
-| scry | minimal — refine via tracked issue |
+See the [Organization repositories](#organization-repositories) table above — the
+**Code review** column tracks per-repo adoption (`tailored` / `minimal` / `—`).
 
 ## Security note
 
